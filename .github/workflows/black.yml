@@ -1,0 +1,18 @@
+name: Run Linter
+
+on: pull_request
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+        # Make sure we have some code to diff.
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        run: echo "INPUT_SRC=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .py$ | xargs)" >> $GITHUB_ENV
+      - name: Run black
+        if: env.INPUT_SRC
+        uses: psf/black@stable
